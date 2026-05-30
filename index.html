@@ -1,0 +1,672 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GURU PLUS K-TET Practice Mock TEST</title>
+  <style>
+  /* Base Reset & Mobile-First Variables */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  :root {
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --primary-color: #534AB7;
+    --primary-light: #EEEDFE;
+    --primary-dark: #3C3489;
+    --accent-color: #9FE1CB;
+    --success-color: #1D9E75;
+    --success-bg: #EAF3DE;
+    --error-color: #E24B4A;
+    --error-bg: #FCEBEB;
+    --text-main: #2D3748;
+    --text-muted: #718096;
+    --border-color: #E2E8F0;
+  }
+
+  body {
+    background-color: #F7FAFC;
+    font-family: var(--font-sans);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Modified for Full Screen Mobile Display */
+  #app {
+    padding: 10px;
+    width: 100%;
+    max-width: 600px; /* Allows flexibility on tablets while remaining full screen on phones */
+    margin: 0 auto;
+  }
+
+  /* Header/Top Bar Card */
+  .top-bar {
+    background: var(--primary-color);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    color: #fff;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+
+  .top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .top-row:last-of-type {
+    margin-bottom: 4px;
+  }
+
+  .quiz-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #CECBF6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+  }
+
+  .q-badge {
+    background: #7F77DD;
+    color: #EEEDFE;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .timer-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--primary-dark);
+    border-radius: 20px;
+    padding: 4px 12px;
+  }
+
+  .timer-txt {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timer-txt.red {
+    color: #F09595;
+    animation: pulse 1s infinite alternate;
+  }
+
+  @keyframes pulse {
+    from { opacity: 1; }
+    to { opacity: 0.7; }
+  }
+
+  .prog-wrap {
+    height: 6px;
+    background: var(--primary-dark);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .prog-fill {
+    height: 100%;
+    background: var(--accent-color);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  /* Question Layout */
+  .q-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+
+  .q-num {
+    font-size: 11px;
+    color: var(--primary-color);
+    font-weight: 600;
+    background: var(--primary-light);
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .q-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+
+  /* Options Layout */
+  .opts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 2px solid var(--border-color);
+    background: #fff;
+    transition: all 0.15s ease;
+    min-height: 48px;
+  }
+
+  .opt-key {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .opt-key.A { background: #E6F1FB; color: #0C447C; }
+  .opt-key.B { background: #FAEEDA; color: #633806; }
+  .opt-key.C { background: #FBEAF0; color: #72243E; }
+  .opt-key.D { background: #EAF3DE; color: #27500A; }
+
+  .opt-txt {
+    font-size: 13.5px;
+    color: var(--text-main);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* Interactive States */
+  .opt.unanswered:active {
+    background: var(--primary-light);
+    border-color: #AFA9EC;
+  }
+
+  .opt.correct-ans {
+    border-color: var(--success-color);
+    background: var(--success-bg);
+    pointer-events: none;
+  }
+  .opt.correct-ans .opt-key {
+    background: var(--success-color);
+    color: #fff;
+  }
+  .opt.correct-ans .opt-txt {
+    color: #085041;
+    font-weight: 600;
+  }
+
+  .opt.wrong-ans {
+    border-color: var(--error-color);
+    background: var(--error-bg);
+    pointer-events: none;
+  }
+  .opt.wrong-ans .opt-key {
+    background: var(--error-color);
+    color: #fff;
+  }
+  .opt.wrong-ans .opt-txt {
+    color: #791F1F;
+  }
+
+  .opt.neutral-locked {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  /* Explanations block */
+  .exp-box {
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    box-shadow: inset 2px 0 0px rgba(0,0,0,0.1);
+  }
+
+  .exp-box.correct {
+    background: var(--success-bg);
+    border: 1px solid #5DCAA5;
+    color: #085041;
+  }
+
+  .exp-box.wrong {
+    background: var(--error-bg);
+    border: 1px solid #F09595;
+    color: #791F1F;
+  }
+
+  .exp-label {
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  /* Action Navigation Buttons */
+  .nav {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 14px; /* Slightly taller for easier thumb action */
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.1s;
+  }
+
+  .btn:active {
+    transform: scale(0.98);
+  }
+
+  .btn-next {
+    background: var(--primary-color);
+    color: #fff;
+  }
+
+  .btn-back {
+    background: #EDF2F7;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+  }
+
+  /* Result Dashboards */
+  .result-top {
+    background: var(--primary-color);
+    border-radius: 12px;
+    padding: 24px 14px;
+    text-align: center;
+    margin-bottom: 12px;
+    color: #fff;
+  }
+
+  .score-ring {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 4px solid var(--accent-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+  }
+
+  .score-big {
+    font-size: 30px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .score-sub {
+    font-size: 12px;
+    color: #CECBF6;
+    margin-top: 2px;
+  }
+
+  .result-label {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .result-sub {
+    font-size: 13px;
+    color: #CECBF6;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .alt-msg {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  .stat-c {
+    border-radius: 10px;
+    padding: 10px 6px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+
+  .stat-c.green { background: var(--success-bg); }
+  .stat-c.red { background: var(--error-bg); }
+  .stat-c.gray { background: #EDF2F7; }
+
+  .stat-n {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .stat-c.green .stat-n { color: var(--success-color); }
+  .stat-c.red .stat-n { color: var(--error-color); }
+  .stat-c.gray .stat-n { color: var(--text-main); }
+
+  .stat-l {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  /* Review Cards Section */
+  .review-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 16px 0 8px;
+    padding-left: 2px;
+  }
+
+  .r-card {
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 14px;
+    margin-bottom: 10px;
+    background: #fff;
+  }
+
+  .r-card.rc { border-left: 4px solid var(--success-color); }
+  .r-card.rw { border-left: 4px solid var(--error-color); }
+  .r-card.rs { border-left: 4px solid var(--text-muted); }
+
+  .r-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .r-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+
+  .r-badge.rc { background: var(--success-bg); color: #27500A; }
+  .r-badge.rw { background: var(--error-bg); color: #791F1F; }
+  .r-badge.rs { background: #EDF2F7; color: var(--text-muted); }
+
+  .r-qnum {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .r-qtxt {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.45;
+    margin-bottom: 8px;
+  }
+
+  .r-ans {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .r-ans.correct { background: var(--success-bg); color: #085041; }
+  .r-ans.wrong { background: var(--error-bg); color: #791F1F; }
+
+  .r-exp {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    border-top: 1px solid var(--border-color);
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+
+  .restart-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  /* Minor view tweaks for super narrow screens */
+  @media(max-width: 350px) {
+    .quiz-title { font-size: 11px; }
+    .timer-txt { font-size: 16px; }
+    .opt-txt { font-size: 12.5px; }
+  }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <div id="view"></div>
+</div>
+
+<script>
+const Q=[
+  {q:"Which civilization flourished in Mexico?",o:["Maya","Aztec","Inca","Babylonian"],a:1,e:"The Aztec civilization flourished in Mexico during the post-classic period from 1300 to 1521."},
+  {q:"Primary sector is associated with:",o:["Trade","Food Processing","Banking","Agriculture"],a:3,e:"Agriculture is fundamentally linked to the primary sector as it involves the direct extraction and production of natural resources."},
+  {q:"The main function of RBI is:",o:["Control money supply","Collect income tax","Manage foreign trade","None"],a:0,e:"The central bank function of the Reserve Bank of India (RBI) is primarily to control the money supply and regulate credit systems within the economy."},
+  {q:"Dark rain-bearing clouds are:",o:["Nimbus clouds","Stratus clouds","Cirrus clouds","Cumulus clouds"],a:0,e:"Nimbus clouds are thick, low, dark clouds that are filled with moisture and produce precipitation."},
+  {q:"Circumnavigation is related with:",o:["Mughals","Portuguese","Khaljis","Marathas"],a:1,e:"Portuguese explorers (such as those in expeditions initiated by Ferdinand Magellan) are historic leaders in maritime global circumnavigation."},
+  {q:"The sitting of Parliament is presided over by:",o:["President","Lok Sabha Speaker","Prime Minister","Vice-President"],a:1,e:"A normal session or joint sitting of Parliament is presided over by the Speaker of the Lok Sabha."},
+  {q:"The term 'Black Death' denotes:",o:["French Revolution","Plague","Industrial Revolution","Decline of Trade Routes"],a:1,e:"'Black Death' refers to the fatal bubonic plague pandemic that swept across Europe and Asia during the 14th century."},
+  {q:"Sustainable development practices include: (i) Wind Energy (ii) Rainwater Harvesting (iii) Use of Fossil Fuel",o:["(i) only","(i) and (ii) only","(ii) and (iii) only","All"],a:1,e:"Wind energy and rainwater harvesting protect natural systems, while using fossil fuels conflicts with sustainability concepts."},
+  {q:"Harappan site Kalibangan is situated in:",o:["Gujarat","Haryana","Rajasthan","Punjab"],a:2,e:"Kalibangan is a prominent site of the ancient Indus Valley Civilization located in the Hanumangarh district of Rajasthan."},
+  {q:"Human Development Index measures:",o:["Health, education, and income","Political instability","Availability of resources","Availability of natural resources"],a:0,e:"The Human Development Index (HDI) is a statistical composite index mapping structural socioeconomic metrics: health (life expectancy), knowledge (education), and standard of living (per capita income)."},
+  {q:"Soil formed by weathering of basaltic lava rocks:",o:["Alluvial Soil","Black Soil","Red Soil","Laterite Soil"],a:1,e:"Black Soil (also known as Regur or Black Cotton soil) is created through the decomposition and weathering of volcanic basaltic lava."},
+  {q:"Agent responsible for Delta landform:",o:["Running Water","Wind","Glacier","Sea Waves"],a:0,e:"Deltas are depositional landforms constructed at the mouth of rivers due to accumulated sediments transported by running water."},
+  {q:"Tax system with higher rates on higher incomes:",o:["Regressive Tax","Progressive Tax","Proportional Tax","Value Added Tax"],a:1,e:"A progressive tax structure charges a higher percentage of tax from high-income earners than from low-income earners."},
+  {q:"Black soil rich region of Peninsular Plateau:",o:["Chota Nagpur","Malwa Plateau","Deccan Plateau","Coastal Region"],a:2,e:"The Deccan Plateau volcanic trap holds the largest single expanse of rich black soil formations in India."},
+  {q:"'India is Federal in structure but Unitary in spirit' was stated by:",o:["Ivor Jennings","K.C. Wheare","B.R. Ambedkar","Rajendra Prasad"],a:1,e:"Professor K.C. Wheare described the Indian Constitution as 'quasi-federal' and stated that it is federal in structure but unitary in spirit."},
+  {q:"Founder of the Self Respect Movement:",o:["Sree Narayana Guru","Ambedkar","E.V. Ramaswami Naicker","Jyotiba Phule"],a:2,e:"E.V. Ramaswami Naicker (widely honored as Periyar) started the Self-Respect Movement in Tamil Nadu in 1925."},
+  {q:"Qualification necessary for a person to contest elections:",o:["Citizenship","Martyrdom","Volunteer Service","None"],a:0,e:"Valid constitutional legal citizenship of the sovereign country is an absolute fundamental mandatory eligibility criteria to contest any public election."},
+  {q:"East Australian Current is:",o:["Warm Current","Cold Current","Seasonal Current","None"],a:0,e:"The East Australian Current is a prominent, fast-moving warm ocean current that moves southward along the eastern coast of Australia."},
+  {q:"Founder of Mauryan Dynasty:",o:["Chandragupta Maurya","Samudragupta","Ashoka","Kautilya"],a:0,e:"Chandragupta Maurya founded the historical Maurya Empire in ancient India around 322 BCE with guidance from Chanakya/Kautilya."},
+  {q:"State List is contained in which Schedule?",o:["7th Schedule","8th Schedule","11th Schedule","12th Schedule"],a:0,e:"The Seventh Schedule splits legislative jurisdictions into three segments: Union List, State List, and Concurrent List."},
+  {q:"Fundamental Right regarding Constitutional Remedies:",o:["Article 32","Article 21","Article 19","Article 14"],a:0,e:"Article 32 empowers individuals to petition the Supreme Court for enforcement of Fundamental Rights via constitutional remedies."},
+  {q:"Democracy started from which language?",o:["Greek","Latin","German","Roman"],a:0,e:"The term originates from the ancient Greek words 'demos' (the people) and 'kratos' (rule or power)."},
+  {q:"Closely spaced contours indicate:",o:["Gentle slope","Steep slope","Plain land","Valley"],a:1,e:"On topographical contour maps, lines that are drawn very close together represent sharp elevation changes or a steep slope."},
+  {q:"Author of 'Dialogue':",o:["Aristotle","Peter Abelard","Thomas Aquinas","Plato"],a:3,e:"Plato is famous for writing legendary philosophical texts structured completely as series of Socratic dialogues."},
+  {q:"Incorrect statement about synchronous satellites:",o:["Geostationary satellites are synchronous","Altitude about 36,000 km","GPS satellites are examples","Series of satellites exist"],a:2,e:"GPS satellites operate in Medium Earth Orbit (MEO) with orbital periods around 12 hours, meaning they are not synchronous in the way geostationary systems are."},
+  {q:"Winter Solstice in Northern Hemisphere:",o:["21 June","23 September","21 March","22 December"],a:3,e:"The winter solstice marks the shortest day and longest night of the year in the northern half of the globe, falling around December 22."},
+  {q:"Who was not a Mughal ruler?",o:["Akbar","Humayun","Rana Pratap","Jahangir"],a:2,e:"Maharana Pratap was the legendary Rajput ruler of Mewar who famously fought against Mughal expansion."},
+  {q:"Russian Revolution broke out during reign of:",o:["Louis XVI","Nicholas II","Louis XIV","Trotsky"],a:1,e:"The 1917 political revolutions in Russia ended imperial autocracy under the reign of the final Romanov Emperor, Tsar Nicholas II."},
+  {q:"Coal mined in India:",o:["Peat","Lignite","Bituminous","Anthracite"],a:2,e:"Bituminous coal constitutes the overwhelming majority of commercial geological coal production and reserves within mainland India."},
+  {q:"Divergent plate boundary causes:",o:["Convergence","Collision","Separation of plates","Subduction"],a:2,e:"Divergent boundaries represent structural geological faultzones where tectonic plates actively push or pull apart from one another."},
+  {q:"Known as 'Andhra Kesari':",o:["T. Prakasam","Dr. P. Raju","T.K. Madhavan","K. Kelappan"],a:0,e:"Tanguturi Prakasam Pantulu (T. Prakasam) was celebrated as 'Andhra Kesari' (The Lion of Andhra) for his bold freedom struggle leadership."},
+  {q:"NOT a poverty alleviation programme:",o:["PMAY-G","PMGSY","NSAP","Digital India"],a:3,e:"Digital India is a flagship digitization and technology infrastructure campaign, whereas PMAY-G, PMGSY, and NSAP are standard targeted rural development and social assistance/poverty relief schemes."},
+  {q:"Kerala belongs to which geological age?",o:["Paleozoic","Mesozoic","Cenozoic","Chalcolithic"],a:2,e:"The structural geological and sedimentary coastal formations of Kerala belong primarily to the Cenozoic era."},
+  {q:"Human capital refers to:",o:["Machines","Private Investment","Education and Health of Population","Buildings"],a:2,e:"Human capital measures the aggregate economic value of human assets, including skills, educational background, capabilities, and wellness metrics."},
+  {q:"UN agency associated with policy and economy:",o:["ILO","UNESCO","UNEP","IMF"],a:3,e:"The International Monetary Fund (IMF) works directly to secure global financial stability, foster economic growth, and coordinate international monetary policies."},
+  {q:"Which atom bomb was dropped on Nagasaki in 1945?",o:["Little Boy","Little Man","Fat Man","Thin Man"],a:2,e:"'Fat Man' was the specific code name assigned to the plutonium implosion-type atomic bomb dropped over Nagasaki on August 9, 1945."},
+  {q:"Founder of Swaraj Party:",o:["Gokhale & Tilak","Subhas & Lal Bahadur","C.R. Das & Motilal Nehru","Gandhi & Nehru"],a:2,e:"Chittaranjan Das and Motilal Nehru organized the Swaraj Party in January 1923 following the suspension of the Non-Cooperation Movement."},
+  {q:"L.M. Singhvi Committee associated with:",o:["Tax Reforms","Panchayati Raj","Centre-State Relations","Education"],a:1,e:"The 1986 L.M. Singhvi Committee strongly advocated giving legal constitutional status to rural local self-governing Panchayati Raj systems."},
+  {q:"Capital Receipts in Budget:",o:["Taxes and Duties","Borrowings and Sale of Assets","Service Charges","Grants only"],a:1,e:"Capital receipts are government financial inflows that either establish future repayment liabilities (borrowings) or lower state assets (disinvestment/sale of assets)."},
+  {q:"Headquarters of WTO:",o:["Jakarta","New York","Geneva","Moscow"],a:2,e:"The World Trade Organization (WTO) is headquartered in Geneva, Switzerland."},
+  {q:"Economic Policy of 1991 included:",o:["Liberalization","Privatization","Globalization","All of these"],a:3,e:"The historic 1991 New Economic Policy introduced comprehensive LPG reforms across India: Liberalization, Privatization, and Globalization."},
+  {q:"Fundamental Right added by:",o:["42nd Amendment","44th Amendment","86th Amendment","73rd Amendment"],a:2,e:"The 86th Constitutional Amendment Act (2002) inserted Article 21A, introducing the Right to Education as a fundamental right."},
+  {q:"Public sector enterprises are:",o:["Owned and managed by Government","Private enterprises","Foreign enterprises","Cooperative enterprises"],a:0,e:"Public Sector Undertakings (PSUs) are structural corporate entities where state or central governments own and manage the majority equity share."},
+  {q:"Temperature 36°C max and 20°C min; mean and range:",o:["10°C & 30°C","16°C & 28°C","28°C & 16°C","20°C & 16°C"],a:2,e:"Daily Mean = (36 + 20) / 2 = 28°C. Diurnal Range = 36 - 20 = 16°C. Therefore, Mean is 28°C and Range is 16°C."},
+  {q:"Winds always blow from high-pressure systems towards:",o:["High pressure systems","Low pressure systems","Equator only","Poles only"],a:1,e:"Winds naturally flow horizontally from structural regions of high atmospheric pressure toward centers of low pressure."},
+  {q:"Nature of the Planning Commission:",o:["Constitutional body","Statutory body","Non-Constitutional body","Judicial body"],a:2,e:"The Planning Commission of India was established via a cabinet resolution as an extra-constitutional, non-statutory advisory organ."},
+  {q:"River not originating from Western Ghats:",o:["Krishna","Godavari","Kaveri","Mahanadi"],a:3,e:"The Mahanadi river originates from highlands in Chhattisgarh, whereas the Krishna, Godavari, and Kaveri flow out from the Western Ghats."},
+  {q:"Mainly affect North-Western India:",o:["Monsoon Winds","Cyclones","Tropical Cyclones","Western Disturbances"],a:3,e:"Western Disturbances are shallow extra-tropical storms coming from the Mediterranean that bring critical winter rainfall to Northwest India."},
+  {q:"Which climatic agent forms moraines?",o:["River","Wind","Glacier","Sea Waves"],a:2,e:"Moraines are accumulations of earth and rock debris deposited along the edges or terminus of a moving glacier."},
+  {q:"Which sector includes mining activities?",o:["Primary Sector","Secondary Sector","Tertiary Sector","Quaternary Sector"],a:0,e:"Mining represents primary economic activity because it focuses directly on extracting crude raw materials directly from natural earth deposits."}
+];
+
+const KEYS=['A','B','C','D'];
+let cur=0,ans=new Array(Q.length).fill(-1),done=new Array(Q.length).fill(false),tLeft=60,tmr=null;
+
+function startTimer(){
+  clearInterval(tmr);
+  tLeft=60;
+  updTimer();
+  tmr=setInterval(()=>{
+    tLeft--;
+    updTimer();
+    if(tLeft<=0){
+      clearInterval(tmr);
+      autoAdv();
+    }
+  },1000);
+}
+
+function updTimer(){
+  const el=document.getElementById('tmr');
+  if(!el) return;
+  const mins=Math.floor(tLeft/60);
+  const secs=tLeft%60;
+  el.textContent=mins+':'+(secs<10?'0':'')+secs;
+  el.className='timer-txt'+(tLeft<=10?' red':'');
+}
+
+function autoAdv(){
+  if(cur<Q.length-1){
+    cur++;
+    render();
+  } else {
+    showResults();
+  }
+}
+
+function render(){
+  startTimer();
+  const q=Q[cur],pct=Math.round((cur/Q.length)*100);
+  const isD=done[cur],ua=ans[cur];
+  let optsHtml=q.o.map((o,i)=>{
+    let cls='opt';
+    if(isD){
+      if(i===q.a)cls+=' correct-ans';
+      else if(i===ua)cls+=' wrong-ans';
+      else cls+=' neutral-locked';
+    } else cls+=' unanswered';
+    return `<div class="${cls}" onclick="pick(${i})"><span class="opt-key ${KEYS[i]}">${KEYS[i]}</span><span class="opt-txt">${o}</span></div>`;
+  }).join('');
+
+  let expHtml='';
+  if(isD){
+    const ok=ua===q.a;
+    expHtml=`<div class="exp-box ${ok?'correct':'wrong'}"><div class="exp-label">${ok?'✓ Correct!':'✗ Incorrect'}</div>${q.e}</div>`;
+  }
+
+  const isLast=cur===Q.length-1;
+  document.getElementById('view').innerHTML=`
+  <div class="top-bar">
+    <div class="top-row"><span class="quiz-title">GURU PLUS K-TET Practice Mock TEST</span><span class="q-badge">Q${cur+1}/${Q.length}</span></div>
+    <div class="top-row">
+      <div class="timer-pill"><span class="timer-txt" id="tmr">1:00</span></div>
+      <span style="font-size:11px;color:#CECBF6;font-weight:500">1 mark each</span>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" style="width:${pct}%"></div></div>
+  </div>
+  <div class="q-card"><div class="q-num">Question ${cur+1}</div><div class="q-text">${q.q}</div></div>
+  <div class="opts">${optsHtml}</div>
+  ${expHtml}
+  <div class="nav">
+    ${cur>0?`<button class="btn btn-back" onclick="goBack()">← Back</button>`:''}
+    ${!isLast?`<button class="btn btn-next" onclick="goNext()">Next →</button>`:`<button class="btn btn-next" style="background:#1D9E75" onclick="showResults()">Submit</button>`}
+  </div>`;
+  updTimer();
+}
+
+function pick(i){
+  if(done[cur]) return;
+  ans[cur]=i;
+  done[cur]=true;
+  clearInterval(tmr); // Stops the running timer completely
+  render();           // Re-renders view and correctly initializes a fresh single timer structure
+}
+
+function goNext(){ clearInterval(tmr); if(cur<Q.length-1){cur++; render();}}
+function goBack(){ clearInterval(tmr); if(cur>0){cur--; render();}}
+
+function showResults(){
+  clearInterval(tmr);
+  let c=0,w=0,s=0;
+  ans.forEach((a,i)=>{if(a===-1)s++;else if(a===Q[i].a)c++;else w++;});
+  const pct=Math.round((c/Q.length)*100);
+  const grade=pct>=80?'Excellent!':pct>=60?'Good effort!':pct>=40?'Keep practising':'Keep going!';
+  let rev=Q.map((q,i)=>{
+    const ua=ans[i],isC=ua===q.a,isS=ua===-1;
+    const rc=isS?'rs':isC?'rc':'rw';
+    const bl=isS?'Skipped':isC?'Correct':'Wrong';
+    return `<div class="r-card ${rc}">
+      <div class="r-head"><span class="r-badge ${rc}">${bl}</span><span class="r-qnum">Q${i+1}</span></div>
+      <div class="r-qtxt">${q.q}</div>
+      ${!isS&&!isC?`<div class="r-ans wrong">Your answer: ${KEYS[ua]}. ${q.o[ua]}</div>`:''}
+      <div class="r-ans correct">Correct: ${KEYS[q.a]}. ${q.o[q.a]}</div>
+      <div class="r-exp">${q.e}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('view').innerHTML=`
+  <div class="result-top">
+    <div class="score-ring"><span class="score-big">${c}</span><span class="score-sub">/ ${Q.length}</span></div>
+    <div class="result-label">${grade}</div>
+    <div class="result-sub">${pct}% · ${c} correct out of ${Q.length}</div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-c green"><div class="stat-n">${c}</div><div class="stat-l">Correct</div></div>
+    <div class="stat-c red"><div class="stat-n">${w}</div><div class="stat-l">Wrong</div></div>
+    <div class="stat-c gray"><div class="stat-n">${s}</div><div class="stat-l">Skipped</div></div>
+  </div>
+  <div class="review-title">Full review</div>
+  ${rev}
+  <button class="restart-btn" onclick="restartQuiz()">Restart quiz</button>`;
+  window.scrollTo(0,0);
+}
+
+function restartQuiz(){cur=0;ans=new Array(Q.length).fill(-1);done=new Array(Q.length).fill(false);render();}
+render();
+</script>
+
+</body>
+</html>
+
+```
